@@ -1,10 +1,13 @@
 package com.rental_listing_landlord.landlord_post.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 @Entity(name="property_posting")
 public class PropertyPosting {
 
@@ -33,6 +36,7 @@ public class PropertyPosting {
 	@Column(name="advance")
 	private double advance;
 	@Column(name="post_id")
+	
 	private String postId;
 	@Column(name="status")
 	private String status;
@@ -41,6 +45,8 @@ public class PropertyPosting {
 	@Column(name="payment")
 	private boolean payment;
 	
+	@OneToOne(mappedBy = "propertyPosting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private PropertyPhotos propertyPhotos;
 	public boolean isPayment() {
 		return payment;
 	}
@@ -131,6 +137,13 @@ public class PropertyPosting {
 	public void setBenefits(String benefits) {
 		this.benefits = benefits;
 	}
+	public PropertyPhotos getPropertyPhotos() {
+        return propertyPhotos;
+    }
+
+    public void setPropertyPhotos(PropertyPhotos propertyPhotos) {
+        this.propertyPhotos = propertyPhotos;
+    }
 	public PropertyPosting(int id, String ownerName, String ownerEmail, String ownerMobile, String propertyAddress,
 			String propertyName, String propertyType, String propertyClassification, String propertyCategory,
 			double rent, double advance, String postId, String status, String benefits) {

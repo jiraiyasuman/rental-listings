@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rental_listing_landlord.landlord_post.entity.PropertyPosting;
+import com.rental_listing_landlord.landlord_post.exception.DuplicateEntryException;
 import com.rental_listing_landlord.landlord_post.exception.NotFoundException;
 import com.rental_listing_landlord.landlord_post.repository.PropertyPostingRepository;
 import com.rental_listing_landlord.landlord_post.services.PropertyPostServices;
@@ -29,14 +30,28 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 
 	@Transactional
 	@Override
-	public PropertyPosting addProperties(PropertyPosting propertyPosting) {
+	public PropertyPosting addProperties(PropertyPosting propertyPosting) throws DuplicateEntryException {
 		propertyPosting.setStatus("Open");
 		propertyPosting.setPayment(false);
-		PropertyPosting savedPosting = propertyPostingRepository.save(propertyPosting);
-		LOGGER.info("Property Details inserted successfully");
-		return savedPosting;
+		boolean status = checkForDuplicateEntry(propertyPosting);
+		if(status==false) {
+			PropertyPosting savedPosting = propertyPostingRepository.save(propertyPosting);
+			LOGGER.info("Property Details inserted successfully");
+			return savedPosting;	
+		}else {
+			LOGGER.warning("Duplicate entry found!");
+			throw new DuplicateEntryException("Duplicate entry is found!");
+		}
+		
 	}
 
+	public boolean checkForDuplicateEntry(PropertyPosting propertyPosting) {
+		PropertyPosting check = propertyPostingRepository.getPropertyPostingByPostId(propertyPosting.getPostId());
+		if(check == null) {
+			return false; // No duplicate entries found
+		}
+		return true;
+	}
 	@Transactional
 	@Override
 	public PropertyPosting updateProperties(String postId, PropertyPosting propertyPosting) {

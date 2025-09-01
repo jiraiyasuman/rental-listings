@@ -5,10 +5,11 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 import com.rental_listing_landlord.landlord_post.entity.PropertyPosting;
+import com.rental_listing_landlord.landlord_post.exception.DuplicateEntryException;
 
 public interface PropertyPostServices {
 
-	public PropertyPosting addProperties(PropertyPosting propertyPosting); // adds a new post 
+	public PropertyPosting addProperties(PropertyPosting propertyPosting) throws DuplicateEntryException; // adds a new post 
 	
 	public PropertyPosting updateProperties(String postId, PropertyPosting propertyPosting); // updates a post
 	

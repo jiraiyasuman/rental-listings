@@ -60,15 +60,20 @@ public class PostPropertyController {
 			description = "HTTP STATUS 201 created"
 			)
 	public ResponseEntity<PropertyPostDto> savePropertyPost(@Valid @RequestBody PropertyPostDto propertyPostDto){
-		PropertyPosting propertyPosting = postMapper.mapToPropertyPosting(propertyPostDto);
-		Random random = new Random();
-		int number = 1000+random.nextInt(9000);
-		String code = "PRO"+String.valueOf(number);
-		propertyPosting.setPostId(code);
-		PropertyPosting savedPropertyPosting = propertyPostServices.addProperties(propertyPosting);
-		PropertyPostDto savedPropertyPostDto = postMapper.mapToPropertyPostDto(savedPropertyPosting);
-	    LOGGER.info("Property post save property is being executed");
-	    return ResponseEntity.ok(savedPropertyPostDto);
+		try {
+			PropertyPosting propertyPosting = postMapper.mapToPropertyPosting(propertyPostDto);
+			Random random = new Random();
+			int number = 1000+random.nextInt(9000);
+			String code = "PRO"+String.valueOf(number);
+			propertyPosting.setPostId(code);
+			PropertyPosting savedPropertyPosting = propertyPostServices.addProperties(propertyPosting);
+			PropertyPostDto savedPropertyPostDto = postMapper.mapToPropertyPostDto(savedPropertyPosting);
+		    LOGGER.info("Property post save property is being executed");
+		    return ResponseEntity.ok(savedPropertyPostDto);
+		} catch (Exception e) {
+			System.err.println(e);
+		}
+		return ResponseEntity.ok(null);
 	}
 	// Get all post details
 	// http://localhost:8080/api/v1/propertyhost/listAll
