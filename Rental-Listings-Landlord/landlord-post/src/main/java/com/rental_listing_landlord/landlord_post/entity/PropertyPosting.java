@@ -36,7 +36,6 @@ public class PropertyPosting {
 	@Column(name="advance")
 	private double advance;
 	@Column(name="post_id")
-	
 	private String postId;
 	@Column(name="status")
 	private String status;

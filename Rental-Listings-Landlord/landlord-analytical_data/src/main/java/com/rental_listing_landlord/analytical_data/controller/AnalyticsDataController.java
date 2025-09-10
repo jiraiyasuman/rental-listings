@@ -14,7 +14,7 @@ import com.rental_listing_landlord.analytical_data.service.AnalyticsDataServices
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("api/v1/landlord_analytics")
 public class AnalyticsDataController {
 	private  AnalyticsDataServices analyticsDataServices;
 	@Autowired

@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,7 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 
 	private PropertyPostingRepository propertyPostingRepository;
 	private Logger LOGGER = Logger.getLogger(getClass().getName());
-	
+	private JavaMailSender javaMailSender;
 	@Autowired
 	public PropertyPostServicesImpl(PropertyPostingRepository propertyPostingRepository) {
 		super();
@@ -37,6 +39,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 		if(status==false) {
 			PropertyPosting savedPosting = propertyPostingRepository.save(propertyPosting);
 			LOGGER.info("Property Details inserted successfully");
+			String to = propertyPosting.getOwnerEmail();
+			String subject ="Property Posting Confirmation";
+			String message="Dear Owner,<br> Congratulations! This is to inform that the posting has been successful and your posting id is"+propertyPosting.getPostId()+"<br> Thanks and Regards,<br>Team Online Rental";
+			sendEmail(to, subject, message);
 			return savedPosting;	
 		}else {
 			LOGGER.warning("Duplicate entry found!");
@@ -152,6 +158,18 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 			Sort.by(sortField).descending();
 		Pageable pageable = PageRequest.of(pageNo-1, pageSize,sort);
 		return this.propertyPostingRepository.findAll(pageable);
+	}
+	
+	public void sendEmail(String to,String subject,String message) {
+		try {
+			SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+			simpleMailMessage.setTo(to);
+			simpleMailMessage.setSubject(subject);
+			simpleMailMessage.setText(message);
+			javaMailSender.send(simpleMailMessage);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
