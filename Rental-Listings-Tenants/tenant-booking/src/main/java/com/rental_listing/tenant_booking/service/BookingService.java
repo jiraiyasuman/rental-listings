@@ -15,5 +15,7 @@ public interface BookingService {
 	
 	public List<Booking> getDetailsByEmail(String email);
 	
-	public Booking getDetailsBy
+	public Booking getDetailsById(int id);
+	
+	public void deleteDetailsById(int id);
 }
