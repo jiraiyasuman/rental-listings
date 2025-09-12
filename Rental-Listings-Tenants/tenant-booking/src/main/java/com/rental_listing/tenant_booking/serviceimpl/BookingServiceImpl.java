@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.rental_listing.tenant_booking.entity.Booking;
 import com.rental_listing.tenant_booking.exception.NotFoundException;
@@ -27,6 +28,7 @@ public class BookingServiceImpl implements BookingService{
 
 	@Autowired
 	@Override
+	@Transactional
 	public Booking addBookingDetails(Booking booking) {
 		Booking savedBooking = bookingRepository.save(booking);
 		LOGGER.info("Booking save details is being executed successfully");
@@ -57,8 +59,9 @@ public class BookingServiceImpl implements BookingService{
 	}
 
 	@Override
-	public Booking updateBookingDetails(Booking booking) {
-		Booking getById = bookingRepository.findById(booking.getId()).get();
+	@Transactional
+	public Booking updateBookingDetails(int id,Booking booking) {
+		Booking getById = bookingRepository.findById(id).get();
 		if(getById==null) {
 			LOGGER.warning("No such records exist");
 			throw new NotFoundException("No such details exist by that id");
@@ -104,6 +107,7 @@ public class BookingServiceImpl implements BookingService{
 	}
 
 	@Override
+	@Transactional
 	public void deleteDetailsById(int id) {
 		Booking getById = bookingRepository.findById(id).get();
 		if(getById==null) {
@@ -112,6 +116,17 @@ public class BookingServiceImpl implements BookingService{
 		}
 		bookingRepository.deleteById(id);
 		LOGGER.info("Delete records by id is being executed successfully");
+	}
+
+	@Override
+	public Booking getDetailsByBookingId(String id) {
+		Booking getByBookingId = bookingRepository.getDetailsByBookingId(id);
+		if(getByBookingId==null) {
+			LOGGER.warning("No such records exist");
+			throw new NotFoundException("No such details exist by that id");
+		}
+		LOGGER.info("Get by Booking ID is being successfully executed");
+		return getByBookingId;
 	}
 
 }

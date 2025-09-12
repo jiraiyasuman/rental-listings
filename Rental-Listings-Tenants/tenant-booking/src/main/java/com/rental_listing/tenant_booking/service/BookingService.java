@@ -11,9 +11,11 @@ public interface BookingService {
 	
 	public List<Booking> getAllDetails();
 	
-	public Booking updateBookingDetails(Booking booking);
+	public Booking updateBookingDetails(int id,Booking booking);
 	
 	public List<Booking> getDetailsByEmail(String email);
+	
+	public Booking getDetailsByBookingId(String id);
 	
 	public Booking getDetailsById(int id);
 	
