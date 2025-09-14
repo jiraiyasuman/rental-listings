@@ -2,14 +2,17 @@ package com.rental_listing_landlord.landlord_login.serviceimpl;
 
 import java.time.LocalDateTime;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import com.rental_listing_landlord.landlord_login.entity.User;
 import com.rental_listing_landlord.landlord_login.repository.UserRepository;
 import com.rental_listing_landlord.landlord_login.service.UserService;
+
+import io.github.resilience4j.retry.annotation.Retry;
 @Service
 public class UserServiceImpl implements UserService{
 
@@ -19,14 +22,16 @@ public class UserServiceImpl implements UserService{
     @Value("${app.account.lock.hours}")
     private int lockHours;
 	@Override
-	public User registerIfNotExists(String email, String password, String name) {
+	@Transactional
+	@Retry(name="${spring.application.name}",fallbackMethod = "")
+	public User registerIfNotExists(User login) {
 		
-		return userRepository.findByEmail(email).orElseGet(() -> {
-			 User u = new User();
-		        u.setEmail(email);
-		        u.setPassword(passwordEncoder.encode(password));
-		        u.setName(name);
-		        return userRepository.save(u);
+		return userRepository.findByEmail(login.getEmail()).orElseGet(() -> {
+			User u = new User();
+		        u.setEmail(login.getEmail());
+		        u.setPassword(login.getPassword());
+		        u.setName(login.getName());
+		        return userRepository.save(login);
 		});
 	}
 

@@ -5,7 +5,7 @@ import com.rental_listing_landlord.landlord_login.repository.UserRepository;
 
 public interface UserService {
 
-	public User registerIfNotExists(String email,String password, String name);
+	public User registerIfNotExists(User user);
 	
 	public boolean isLocked(User user);
 	

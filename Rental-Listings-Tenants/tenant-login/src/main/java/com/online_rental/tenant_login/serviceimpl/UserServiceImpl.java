@@ -18,14 +18,14 @@ public class UserServiceImpl implements LoginService{
     @Value("${app.account.lock.hours}")
     private int lockHours;
 	@Override
-	public Login registerIfNotExists(String email, String password, String name) {
+	public Login registerIfNotExists(Login login) {
 		
-		return userRepository.findByEmail(email).orElseGet(() -> {
+		return userRepository.findByEmail(login.getEmail()).orElseGet(() -> {
 			 Login u = new Login();
-		        u.setEmail(email);
-		        u.setPassword(passwordEncoder.encode(password));
-		        u.setName(name);
-		        return userRepository.save(u);
+		        u.setEmail(login.getEmail());
+		        u.setPassword(login.getPassword());
+		        u.setName(login.getName());
+		        return userRepository.save(login);
 		});
 	}
 

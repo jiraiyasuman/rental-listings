@@ -32,6 +32,10 @@
 		<spring-cloud.version>2025.0.0</spring-cloud.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.guicedee.services/slf4j -->
 		<dependency>
 			<groupId>com.guicedee.services</groupId>

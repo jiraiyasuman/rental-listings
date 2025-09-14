@@ -4,7 +4,7 @@ import com.online_rental.tenant_login.entity.Login;
 
 public interface LoginService {
 
-public Login registerIfNotExists(String email,String password, String name);
+public Login registerIfNotExists(Login login);
 	
 	public boolean isLocked(Login user);
 	

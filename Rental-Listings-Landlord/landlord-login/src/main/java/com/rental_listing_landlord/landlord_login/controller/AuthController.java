@@ -1,14 +1,20 @@
  package com.rental_listing_landlord.landlord_login.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import com.rental_listing_landlord.landlord_login.dto.LoginDto;
 import com.rental_listing_landlord.landlord_login.entity.User;
+import com.rental_listing_landlord.landlord_login.mapper.LoginMapper;
 import com.rental_listing_landlord.landlord_login.service.OtpService;
 import com.rental_listing_landlord.landlord_login.service.UserService;
 
@@ -29,6 +35,29 @@ public class AuthController {
     public AuthController(UserService userService, OtpService otpService) {
         this.userService = userService;
         this.otpService = otpService;
+    }
+    public LoginMapper loginMapper = new LoginMapper();
+    @Autowired
+    private PasswordEncoder bCryptPasswordEncoder;
+    // http:localhost:8087/api/v1/tenant_login/register
+    @Operation(
+    		summary = "Login registration logic in tenant login authcontroller",
+    		description = "Login registration logic in tenant login"
+    		)
+    @ApiResponse(
+    		responseCode = "201",
+    		description = "HTTP STATUS 201 created"
+    		)
+    @PostMapping("/register")
+    public ResponseEntity<User> registerUser(@RequestBody @Valid LoginDto loginDto){
+    	User login = loginMapper.mapToLogin(loginDto);
+    	String hashedPassword=bCryptPasswordEncoder.encode(login.getPassword());
+    	login.setPassword(hashedPassword);
+    	login.setFailedAttempts(0);
+    	login.setLockLocalDateTime(null);
+    	User savedLogin = userService.registerIfNotExists(login);
+    	LOGGER.info("Register tenant controller is successfully executed");
+    	return ResponseEntity.ok(savedLogin);
     }
     // http:localhost:8087/api/v1/landlord_login/login
     @Operation(

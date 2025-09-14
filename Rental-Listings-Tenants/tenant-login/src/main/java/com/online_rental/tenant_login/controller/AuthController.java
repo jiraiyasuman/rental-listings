@@ -2,11 +2,15 @@ package com.online_rental.tenant_login.controller;
 
 import java.time.LocalDateTime;
 
+
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,13 +18,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.online_rental.tenant_login.dto.LoginDto;
 import com.online_rental.tenant_login.entity.Login;
+import com.online_rental.tenant_login.mapper.LoginMapper;
 import com.online_rental.tenant_login.service.LoginService;
 import com.online_rental.tenant_login.service.OtpService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin("*")
@@ -31,9 +38,33 @@ public class AuthController {
     private final OtpService otpService;
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
+    @Autowired
     public AuthController(LoginService userService, OtpService otpService) {
         this.userService = userService;
         this.otpService = otpService;
+    }
+    public LoginMapper loginMapper = new LoginMapper();
+    @Autowired
+    private PasswordEncoder bCryptPasswordEncoder;
+    // http:localhost:8087/api/v1/tenant_login/register
+    @Operation(
+    		summary = "Login registration logic in tenant login authcontroller",
+    		description = "Login registration logic in tenant login"
+    		)
+    @ApiResponse(
+    		responseCode = "201",
+    		description = "HTTP STATUS 201 created"
+    		)
+    @PostMapping("/register")
+    public ResponseEntity<Login> registerUser(@RequestBody @Valid LoginDto loginDto){
+    	Login login = loginMapper.mapToLogin(loginDto);
+    	String hashedPassword=bCryptPasswordEncoder.encode(login.getPassword());
+    	login.setPassword(hashedPassword);
+    	login.setFailedAttempts(0);
+    	login.setLockLocalDateTime(null);
+    	Login savedLogin = userService.registerIfNotExists(login);
+    	LOGGER.info("Register tenant controller is successfully executed");
+    	return ResponseEntity.ok(savedLogin);
     }
     // http:localhost:8087/api/v1/tenant_login/login
     @Operation(
@@ -182,7 +213,7 @@ public class AuthController {
     		description = "HTTP STATUS 201 created"
     		)
  // http:localhost:8087/api/v1/tenant_login/dashboard
-    @GetMapping("/dashboard")
+    @GetMapping("/dashboard-tenant")
     public ResponseEntity<?> me(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session == null) { 
