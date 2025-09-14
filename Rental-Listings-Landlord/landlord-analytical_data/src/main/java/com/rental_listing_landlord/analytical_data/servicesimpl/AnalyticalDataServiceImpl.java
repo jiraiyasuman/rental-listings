@@ -1,22 +1,26 @@
 package com.rental_listing_landlord.analytical_data.servicesimpl;
 
 import java.time.LocalDateTime;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.rental_listing_landlord.analytical_data.controller.AnalyticsDataController;
 import com.rental_listing_landlord.analytical_data.dto.TrackEventRequest;
 import com.rental_listing_landlord.analytical_data.entity.AnalyticsData;
 import com.rental_listing_landlord.analytical_data.repository.AnalyticsDataRepository;
 import com.rental_listing_landlord.analytical_data.service.AnalyticsDataServices;
 
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class AnalyticalDataServiceImpl implements AnalyticsDataServices{
 
-	private Logger LOGGER = Logger.getLogger(getClass().getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticalDataServiceImpl.class);
 	private AnalyticsDataRepository analyticsDataRepository;
 	@Autowired
 	public AnalyticalDataServiceImpl(AnalyticsDataRepository analyticsDataRepository) {
@@ -24,27 +28,30 @@ public class AnalyticalDataServiceImpl implements AnalyticsDataServices{
 		this.analyticsDataRepository = analyticsDataRepository;
 	}
 	@Override
+	@Transactional
+	@Retry(name="${spring.application.name}", fallbackMethod = "")
 	public void logEvent(TrackEventRequest req, HttpServletRequest http) {
-		AnalyticsData e = new AnalyticsData();
-		e.setSessionId(req.getSessionId());
-		e.setUserId(req.getUserId());
-		e.setEventType(req.getEventType());
-		e.setPageUrl(req.getPageUrl());
-		e.setReferrer(req.getReferrer());
-		e.setBrowser(req.getBrowser());
-		e.setOs(req.getOs());
-		e.setMetaData(req.getMetadata());
+		try {
+			AnalyticsData e = new AnalyticsData();
+			e.setSessionId(req.getSessionId());
+			e.setUserId(req.getUserId());
+			e.setEventType(req.getEventType());
+			e.setPageUrl(req.getPageUrl());
+			e.setReferrer(req.getReferrer());
+			e.setBrowser(req.getBrowser());
+			e.setOs(req.getOs());
+			e.setMetaData(req.getMetadata());
 
 
-		String ip = http.getHeader("X-Forwarded-For");
-		if (ip == null || ip.isBlank()) ip = http.getRemoteAddr();
-		e.setIpAddress(ip);
-		e.setUserAgent(http.getHeader("User-Agent"));
-
-
-		analyticsDataRepository.save(e);
+			String ip = http.getHeader("X-Forwarded-For");
+			if (ip == null || ip.isBlank()) ip = http.getRemoteAddr();
+			e.setIpAddress(ip);
+			e.setUserAgent(http.getHeader("User-Agent"));
+			analyticsDataRepository.save(e);
+			LOGGER.info("Analytics Data insertion service component is sucessfully executed");
+		} catch (Exception e) {
+			System.err.println(e);
+			LOGGER.error("Sorry due to some error data could not be saved");
+		}
 	}
-
-	
-	
 }

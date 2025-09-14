@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +22,8 @@ import com.rental_listing_landlord.landlord_post.entity.PropertyPosting;
 import com.rental_listing_landlord.landlord_post.repository.PropertyPhotosRepository;
 import com.rental_listing_landlord.landlord_post.services.PropertyPhotoService;
 import com.rental_listing_landlord.landlord_post.services.PropertyPostServices;
+
+import io.github.resilience4j.retry.annotation.Retry;
 @Service
 public class PropertyPhotosServiceImpl  implements PropertyPhotoService{
 
@@ -35,6 +38,11 @@ public class PropertyPhotosServiceImpl  implements PropertyPhotoService{
 		this.propertyPhotosRepository = propertyPhotosRepository;
 	}
 
+	@Transactional
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	@Override
 	public Boolean savePropertyPhootos(PropertyPhotos propertyPhotos) {
 		PropertyPhotos savedPropertyPhotos = propertyPhotosRepository.save(propertyPhotos);
@@ -45,6 +53,11 @@ public class PropertyPhotosServiceImpl  implements PropertyPhotoService{
 	}
 
 	@Override
+	@Transactional
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public Boolean uploadFile(MultipartFile file) throws IOException {
 		String fileName = file.getOriginalFilename();
 		

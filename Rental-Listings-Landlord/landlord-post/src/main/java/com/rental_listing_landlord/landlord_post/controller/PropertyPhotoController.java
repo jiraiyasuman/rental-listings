@@ -20,8 +20,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rental_listing_landlord.landlord_post.entity.PropertyPhotos;
 import com.rental_listing_landlord.landlord_post.services.PropertyPhotoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("api/v1/propertyphoto")
+@Tag(
+		name="CRUD REST API for Landlord Property Photo Posting",
+		description = "CRUD REST API for Landlord Property Photo Posting"
+		)
 public class PropertyPhotoController {
 
 	private PropertyPhotoService propertyPhotoService;
@@ -33,7 +41,16 @@ public class PropertyPhotoController {
 	}
 	
 	private Logger LOGGER = Logger.getLogger(getClass().getName());
+	// http:localhost:8080/api/v1/propertyphoto/upload
 	@PostMapping("/upload")
+	@Operation(
+			summary = "Upload  REST API",
+			description="Upload  REST API is used to save the photos"
+			)
+	@ApiResponse(
+			responseCode = "201",
+			description = "HTTP STATUS 201 created"
+			)
 	public ResponseEntity<?> uploadFile(@RequestParam MultipartFile file){
 		try {
 
@@ -48,6 +65,15 @@ public class PropertyPhotoController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	// http:localhost:8080/api/v1/propertyphoto/upload-data
+	@Operation(
+			summary = "Upload-DATA REST API",
+			description = "Upload-DATA REST API is used to save the data"
+			)
+	@ApiResponse(
+			responseCode = "201",
+			description = "HTTP STATUS 201 created"
+			)
 	@PostMapping("/upload-data")
 	public ResponseEntity<?> uploadFileWithData(@RequestParam String product, @RequestParam MultipartFile file) {
 		List<String> extension = Arrays.asList( "jpeg", "png", "jpg" );

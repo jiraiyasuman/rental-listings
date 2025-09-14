@@ -18,6 +18,8 @@ import com.rental_listing_landlord.landlord_post.exception.DuplicateEntryExcepti
 import com.rental_listing_landlord.landlord_post.exception.NotFoundException;
 import com.rental_listing_landlord.landlord_post.repository.PropertyPostingRepository;
 import com.rental_listing_landlord.landlord_post.services.PropertyPostServices;
+
+import io.github.resilience4j.retry.annotation.Retry;
 @Service
 public class PropertyPostServicesImpl implements PropertyPostServices{
 
@@ -32,6 +34,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 
 	@Transactional
 	@Override
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public PropertyPosting addProperties(PropertyPosting propertyPosting) throws DuplicateEntryException {
 		propertyPosting.setStatus("Open");
 		propertyPosting.setPayment(false);
@@ -51,6 +57,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 		
 	}
 
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public boolean checkForDuplicateEntry(PropertyPosting propertyPosting) {
 		PropertyPosting check = propertyPostingRepository.getPropertyPostingByPostId(propertyPosting.getPostId());
 		if(check == null) {
@@ -60,6 +70,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 	}
 	@Transactional
 	@Override
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public PropertyPosting updateProperties(String postId, PropertyPosting propertyPosting) {
 		PropertyPosting fetchPropertyPosting = propertyPostingRepository.getPropertyPostingByPostId(postId);
 		if(fetchPropertyPosting == null) {
@@ -88,6 +102,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 
 	@Transactional
 	@Override
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public PropertyPosting updateStatusProperties(String postId, String status) {
 		PropertyPosting fetchPropertyPosting = propertyPostingRepository.getPropertyPostingByPostId(postId);
 		if(fetchPropertyPosting == null) {
@@ -101,6 +119,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 	}
 
 	@Override
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public List<PropertyPosting> viewAllProperties() {
 		List<PropertyPosting> getAllDetails = propertyPostingRepository.findAll();
 		LOGGER.info("All Property Details are being fetched successfully");
@@ -108,6 +130,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 	}
 
 	@Override
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public List<PropertyPosting> viewIndividualOwnerPosting(String ownerEmail) {
 		List<PropertyPosting> getDetailsByEmail = propertyPostingRepository.getPropertyPostingByOwnerEmail(ownerEmail);
 		LOGGER.info("Property Details by email id are being fetched successfully");
@@ -115,6 +141,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 	}
 
 	@Override
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public PropertyPosting getPropertyById(int id) {
 		PropertyPosting fetchPropertyPosting = propertyPostingRepository.findById(id).get();
 		if(fetchPropertyPosting == null) {
@@ -127,6 +157,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 
 	@Transactional
 	@Override
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public void deletePropertyById(int id) {
 		PropertyPosting fetchPropertyPosting = propertyPostingRepository.findById(id).get();
 		if(fetchPropertyPosting == null) {
@@ -140,6 +174,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 
 	@Transactional
 	@Override
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public PropertyPosting updatePaymentStatusProperties(String postId, boolean payment) {
 		PropertyPosting fetchPropertyPosting = propertyPostingRepository.getPropertyPostingByPostId(postId);
 		if(fetchPropertyPosting == null) {
@@ -152,6 +190,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 	}
 
 	@Override
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public Page<PropertyPosting> findPaginatedAllDetails(int pageNo, int pageSize, String sortField,
 			String sortDirection) {
 		Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending():
@@ -159,7 +201,10 @@ public class PropertyPostServicesImpl implements PropertyPostServices{
 		Pageable pageable = PageRequest.of(pageNo-1, pageSize,sort);
 		return this.propertyPostingRepository.findAll(pageable);
 	}
-	
+	@Retry(
+			name="${spring.application.name}",
+			fallbackMethod = ""
+			)
 	public void sendEmail(String to,String subject,String message) {
 		try {
 			SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
