@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Landing Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .carousel-slide {
+            transition: transform 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<script src="https://cdn.tailwindcss.com"></script>
+<body class="bg-gray-100">
+<nav class="bg-white shadow-md fixed w-full z-50 h-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+
+            <!-- Left: Logo -->
+            <div class="flex-shrink-0">
+                <a href="#" class="flex items-center">
+                    <img src="your-logo.png" alt="Logo" class="h-10 w-auto mr-2" />
+                </a>
+
+            </div>
+
+            <!-- Center: Nav Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <ol class="flex space-x-6 text-gray-700 font-medium">
+                    <li><a href="/" class="hover:text-blue-600">Home</a></li>
+                    <li><a href="/service" class="hover:text-blue-600">Services</a></li>
+                    <li><a href="/about" class="hover:text-blue-600">About Us</a></li>
+                    <li><a href="/contact" class="hover:text-blue-600">Contact</a></li>
+                </ol>
+            </div>
+
+            <!-- Right: Register/Login -->
+            <div class="hidden md:flex items-center space-x-4">
+                <a href="/register" class="text-gray-700 hover:text-blue-600 font-medium">Register</a>
+                <a href="/login" class="bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700 font-medium">Login</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-btn" class="text-gray-700 focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor"
+                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden px-4 pb-4">
+        <ol class="space-y-2 text-gray-700 font-medium">
+            <li><a href="/" class="block hover:text-blue-600">Home</a></li>
+            <li><a href="/service" class="block hover:text-blue-600">Services</a></li>
+            <li><a href="/about" class="block hover:text-blue-600">About Us</a></li>
+            <li><a href="/contact" class="block hover:text-blue-600">Contact</a></li>
+        </ol>
+        <div class="mt-4 space-y-2">
+            <a href="/register" class="block text-gray-700 hover:text-blue-600">Register</a>
+            <a href="/login" class="block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Login</a>
+        </div>
+    </div>
+</nav>
+<!-- Header Section -->
+<div class="text-center">
+    <img src="https://i.postimg.cc/J0gbjdh3/Leonardo-Anime-XL-multi-storey-buildings-2.jpg" alt="E-Rental Logo" class="mx-auto w-28">
+    <h1 class="text-2xl font-bold text-gray-800 mt-4">Welcome to Online Rental Bookings</h1>
+    <h2 class="text-lg text-gray-600 font-medium">Centre for E-Rental Bookings</h2>
+    <p class="text-orange-600 font-semibold mt-2">
+        Login in to post and book your properties online and have a better experience.
+    </p>
+</div>
+
+<!-- Login Buttons -->
+<div class="mt-8 space-y-4 w-full max-w-xs">
+    <button class="w-full py-3 bg-white border border-gray-300 rounded-md shadow hover:bg-gray-100 text-gray-800 font-semibold transition">
+        <a href="/login-landlord" class="block w-full h-full">Login as a Landlord</a>
+    </button>
+    <button class="w-full py-3 bg-white border border-gray-300 rounded-md shadow hover:bg-gray-100 text-gray-800 font-semibold transition">
+        <a href="/login-tenant" class="block w-full h-full">Login as a Tenant</a>
+    </button>
+</div>
+<footer class="bg-gray-900 text-white py-10">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Column 1: Logo + Description -->
+        <div>
+            <h2 class="text-2xl font-bold mb-3">Rental Booking</h2>
+            <p class="text-gray-400 text-sm">Your trusted partner for quick and safe rental bookings around the city.</p>
+        </div>
+
+        <!-- Column 2: Useful Links -->
+        <div>
+            <h3 class="text-xl font-semibold mb-3">Quick Links</h3>
+            <ul class="space-y-2 text-gray-300">
+                <li><a href="/" class="hover:text-white">Home</a></li>
+                <li><a href="/service" class="hover:text-white">Services</a></li>
+                <li><a href="/about" class="hover:text-white">About Us</a></li>
+                <li><a href="/contact" class="hover:text-white">Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 3: Contact Info -->
+        <div>
+            <h3 class="text-xl font-semibold mb-3">Contact Us</h3>
+            <p class="text-gray-300 text-sm"> Barrackpore, Kolkata</p>
+            <p class="text-gray-300 text-sm">+91 9875441655</p>
+            <p class="text-gray-300 text-sm"> support@ridenow.com</p>
+        </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="mt-10 border-t border-gray-700 pt-4 text-center text-sm text-gray-400">
+        &copy; <span id="year">© Suman Talukdar</span> E-Rentals. All rights reserved.
+    </div>
+</footer>
+</body>
+</html>

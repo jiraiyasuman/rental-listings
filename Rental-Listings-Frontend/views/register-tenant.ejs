@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+<div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Register</h1>
+
+    <form id="registrationForm" action="/submit-register-tenant" method="POST" class="space-y-4">
+
+        <!-- Name -->
+        <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+            <input type="text" id="name" name="name"
+                   class="mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                   placeholder="Enter your name" required>
+            <p id="nameError" class="text-red-500 text-sm mt-1 hidden"></p>
+        </div>
+
+        <!-- Email -->
+        <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" id="email" name="email"
+                   class="mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                   placeholder="Enter your email" required>
+            <p id="emailError" class="text-red-500 text-sm mt-1 hidden"></p>
+        </div>
+
+        <!-- Password -->
+        <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+            <input type="password" id="password" name="password"
+                   class="mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                   placeholder="Enter your password" required>
+            <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit"
+                class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition">
+            Register
+        </button>
+        <button class="w-full py-3 bg-white border border-gray-300 rounded-md shadow hover:bg-gray-100 text-gray-800 font-semibold transition">
+            <a href="/" class="block w-full h-full">Cancel</a>
+        </button>
+    </form>
+</div>
+
+<!-- Client-side Validation Script -->
+<script>
+    const form = document.getElementById("registrationForm");
+
+    form.addEventListener("submit", function (event) {
+        let valid = true;
+
+        // Name Validation
+        const name = document.getElementById("name").value.trim();
+        const nameError = document.getElementById("nameError");
+        if (!/^[A-Za-z ]{3,}$/.test(name)) {
+            nameError.textContent = "Name must be at least 3 characters and contain only letters and spaces.";
+            nameError.classList.remove("hidden");
+            valid = false;
+        } else {
+            nameError.classList.add("hidden");
+        }
+
+        // Email Validation
+        const email = document.getElementById("email").value.trim();
+        const emailError = document.getElementById("emailError");
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+            emailError.textContent = "Please enter a valid email address.";
+            emailError.classList.remove("hidden");
+            valid = false;
+        } else {
+            emailError.classList.add("hidden");
+        }
+
+        // Password Validation
+        const password = document.getElementById("password").value;
+        const passwordError = document.getElementById("passwordError");
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(password)) {
+            passwordError.textContent = "Password must be at least 6 characters, with uppercase, lowercase, and a number.";
+            passwordError.classList.remove("hidden");
+            valid = false;
+        } else {
+            passwordError.classList.add("hidden");
+        }
+
+        // Prevent form submission if invalid
+        if (!valid) {
+            event.preventDefault();
+        }
+    });
+</script>
+<footer class="bg-gray-900 text-white py-10">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Column 1: Logo + Description -->
+        <div>
+            <h2 class="text-2xl font-bold mb-3">Rental Booking</h2>
+            <p class="text-gray-400 text-sm">Your trusted partner for quick and safe rental bookings around the city.</p>
+        </div>
+
+        <!-- Column 2: Useful Links -->
+        <div>
+            <h3 class="text-xl font-semibold mb-3">Quick Links</h3>
+            <ul class="space-y-2 text-gray-300">
+                <li><a href="/" class="hover:text-white">Home</a></li>
+                <li><a href="/service" class="hover:text-white">Services</a></li>
+                <li><a href="/about" class="hover:text-white">About Us</a></li>
+                <li><a href="/contact" class="hover:text-white">Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 3: Contact Info -->
+        <div>
+            <h3 class="text-xl font-semibold mb-3">Contact Us</h3>
+            <p class="text-gray-300 text-sm"> Barrackpore, Kolkata</p>
+            <p class="text-gray-300 text-sm">+91 9875441655</p>
+            <p class="text-gray-300 text-sm"> support@ridenow.com</p>
+        </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="mt-10 border-t border-gray-700 pt-4 text-center text-sm text-gray-400">
+        &copy; <span id="year">© Suman Talukdar</span> E-Rentals. All rights reserved.
+    </div>
+</footer>
+</body>
+</html>
