@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+<div class="bg-white p-8 rounded shadow w-full max-w-md">
+    <h1 class="text-2xl mb-4">Login</h1>
+
+    <% if (typeof error !== 'undefined') { %>
+        <div class="bg-red-100 text-red-700 p-2 rounded mb-3"><%= error %></div>
+    <% } %>
+
+    <form id="loginForm" method="post" action="/submit-login-landlord" class="space-y-4">
+        <div>
+            <input id="email" name="email" placeholder="Email"
+                   class="w-full p-2 border rounded" required/>
+            <p id="emailError" class="text-sm text-red-500 hidden mt-1"></p>
+        </div>
+        <div>
+            <input id="password" name="password" type="password" placeholder="Password"
+                   class="w-full p-2 border rounded" required/>
+            <p id="passwordError" class="text-sm text-red-500 hidden mt-1"></p>
+        </div>
+        <button class="w-full bg-blue-600 text-white p-2 rounded">Login</button>
+        <button class="w-full py-3 bg-white border border-gray-300 rounded-md shadow hover:bg-gray-100 text-gray-800 font-semibold transition">
+            <a href="/" class="block w-full h-full">Cancel</a>
+        </button>
+    </form>
+</div>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+        let valid = true;
+
+        // Email validation
+        const email = document.getElementById("email").value.trim();
+        const emailError = document.getElementById("emailError");
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+            emailError.textContent = "Enter a valid email address.";
+            emailError.classList.remove("hidden");
+            valid = false;
+        } else {
+            emailError.classList.add("hidden");
+        }
+
+        // Password validation (min 6 chars)
+        const password = document.getElementById("password").value.trim();
+        const passwordError = document.getElementById("passwordError");
+        if (password.length < 6) {
+            passwordError.textContent = "Password must be at least 6 characters.";
+            passwordError.classList.remove("hidden");
+            valid = false;
+        } else {
+            passwordError.classList.add("hidden");
+        }
+
+        if (!valid) e.preventDefault();
+    });
+</script>
+</body>
+</html>

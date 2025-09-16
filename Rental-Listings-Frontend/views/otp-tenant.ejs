@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>OTP Verification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+<div class="bg-white p-8 rounded shadow w-full max-w-md">
+    <h1 class="text-2xl mb-4">Enter OTP</h1>
+
+    <% if (typeof error !== 'undefined') { %>
+        <div class="bg-red-100 text-red-700 p-2 rounded mb-3"><%= error %></div>
+    <% } %>
+
+    <form id="otpForm" method="post" action="/submit-verify-otp-tenant" class="space-y-4">
+        <div>
+            <input id="otpCode" name="code" maxlength="6" placeholder="6-digit OTP"
+                   class="w-full p-2 border rounded text-center tracking-widest" required/>
+            <p id="otpError" class="text-sm text-red-500 hidden mt-1"></p>
+        </div>
+        <button class="w-full bg-green-600 text-white p-2 rounded">Verify</button>
+    </form>
+
+    <!-- Resend OTP -->
+    <div class="mt-4 text-center">
+        <button id="resend" class="w-full bg-gray-300 p-2 rounded disabled:opacity-50">Resend OTP</button>
+        <p id="resendMsg" class="text-sm text-gray-600 mt-2"></p>
+    </div>
+</div>
+
+<script>
+    // OTP Validation
+    document.getElementById("otpForm").addEventListener("submit", function (e) {
+        const otp = document.getElementById("otpCode").value.trim();
+        const otpError = document.getElementById("otpError");
+        if (!/^[0-9]{6}$/.test(otp)) {
+            otpError.textContent = "OTP must be a 6-digit number.";
+            otpError.classList.remove("hidden");
+            e.preventDefault();
+        } else {
+            otpError.classList.add("hidden");
+        }
+    });
+
+    // Resend OTP with cooldown
+    const resendBtn = document.getElementById("resend");
+    const resendMsg = document.getElementById("resendMsg");
+    let cooldown = 0;
+
+    resendBtn.addEventListener("click", async () => {
+        if (cooldown > 0) return;
+
+        const res = await fetch("/resend-otp-tenant", { method: "POST" });
+        const json = await res.json();
+        if (json.ok) {
+            cooldown = 30; // 30s cooldown
+            resendBtn.disabled = true;
+            resendMsg.textContent = "OTP resent! Please wait 30s before retrying.";
+            const timer = setInterval(() => {
+                cooldown--;
+                resendMsg.textContent = cooldown > 0
+                    ? `Wait ${cooldown}s before requesting again.`
+                    : "";
+                if (cooldown <= 0) {
+                    clearInterval(timer);
+                    resendBtn.disabled = false;
+                    resendMsg.textContent = "";
+                }
+            }, 1000);
+        } else {
+            alert("Error: " + (json.error || "Unable to resend OTP"));
+        }
+    });
+</script>
+</body>
+</html>
