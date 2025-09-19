@@ -58,7 +58,7 @@ public class PaymentOrderController {
 		}
 		return ResponseEntity.ok(savedOrder);
 	}
-	// http://localhost:8090/api/v1/tenant_payment/create
+	// http://localhost:8090/api/v1/tenant_payment/handle
 		@Operation(
 				summary = "Update Payment REST API",
 				description = "Update Payment REST API is used to update the details of the payments made"

@@ -132,7 +132,7 @@ app.post('/resend-otp-landlord', async (req, res) => {
 
 API_LOGOUT_LANDLORD="http:localhost:8083/api/v1/landlord_login/logout";
 app.post('/logout-landlord', async (req, res) => {
-  await fetch(API_LOGOUT_LANDLORD, { method: 'POST', credentials: 'include' });
+  await fetch(`${API_LOGOUT_LANDLORD}`, { method: 'POST', credentials: 'include' });
   res.redirect('/');
 });
 
@@ -193,6 +193,90 @@ API_LOGOUT_TENANT="http:localhost:8087/api/v1/tenant_login/logout";
 app.post('/logout-tenant', async (req, res) => {
   await fetch(API_LOGOUT_TENANT, { method: 'POST', credentials: 'include' });
   res.redirect('/');
+});
+// dashboard landlord
+router.get('/dashboard-landlord', function(req, res, next) {
+  res.render('dashboard-landlord', { title: 'Express' });
+});
+
+// property add
+
+router.get('/property/add', function(req, res, next) {
+  res.render('property-add', { title: 'Express' });
+});
+// view all properties post
+API_DISPLAY_ALL_PROPERTY_POST="http://localhost:8080/api/v1/propertypost/listAll"
+router.get('/property/view', async(req, res)=>{
+  try {
+    const response = await axios.get(`${API_DISPLAY_ALL_PROPERTY_POST}`);
+    res.render('display-all-properties', { expenses: response.data });
+  } catch (err) {
+    handleError(err, res);
+  }
+});
+
+// view property by id
+API_DISPLAY_PROPERTY_BY_ID="http://localhost:8080/api/v1/propertypost/listAll";
+router.get('/property/view/:id', async(req, res)=>{
+  try {
+    const response= await axios.get(`${API_DISPLAY_PROPERTY_BY_ID}/${req.params.id}`);
+    res.render('display-property-by-id', { expenses: response.data });
+  }catch (err) {
+    handleError(err, res);
+  }
+});
+// view all bookings
+API_DISPLAY_ALL_BOOKING="http://localhost:8086/api/v1/tenant/list";
+router.get('/booking/view', async(req, res)=>{
+  try {
+    const response = await axios.get(`${API_DISPLAY_ALL_PROPERTY_POST}`);
+    res.render('display-all-booking', { expenses: response.data });
+  } catch (err) {
+    handleError(err, res);
+  }
+});
+// go to search bookings by email
+router.get('/booking/search/email', async(req, res)=>{
+  res.render('search-booking-email', { title: 'Express' });
+})
+// View bookings by email
+API_DISPLAY_BOOKINGS_BY_EMAIL="http://localhost:8086/api/v1/tenant/searchByEmail";
+router.get('/submit/booking/search/email', async(req, res)=>{
+  try {
+    const response = await axios.post(`${API_DISPLAY_ALL_PROPERTY_POST}`);
+    res.render('display-booking-email', { expenses: response.data });
+  } catch (err) {
+    handleError(err, res);
+  }
+});
+// add properties
+API_PROPERTY_POST="http://localhost:8080/api/v1/propertypost/save";
+router.post('/submit-property', async (req, res) => {
+  try {
+    await axios.post(API_PROPERTY_POST, req.body);
+    res.redirect('/dashboard-landlord');
+  } catch (err) {
+    handleError(err, res);
+  }
+});
+// add booking
+API_PROPERTY_POST="http://localhost:8086/api/v1/tenant/save";
+router.post('/submit-tenant', async (req, res) => {
+  try {
+    await axios.post(API_PROPERTY_POST, req.body);
+    res.redirect('/dashboard-landlord');
+  } catch (err) {
+    handleError(err, res);
+  }
+});
+API_DISPLAY_ALL_BOOKING="http://localhost:8086/api/v1/tenant/list";
+router.get('/tenant-booking/view', async(req, res)=>{
+  try {
+    const response = await axios.get(`${API_DISPLAY_ALL_PROPERTY_POST}`);
+    res.render('display-all-booking', { expenses: response.data });
+  } catch (err) {
+    handleError(err, res);
+  }
 });
 
 module.exports = router;

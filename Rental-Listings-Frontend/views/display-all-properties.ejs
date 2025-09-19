@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard-Landlord</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+<nav class="bg-gray-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16">
+            <!-- Center: Menu Links -->
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="/dashboard-landlord" class="hover:text-indigo-400">Dashboard</a>
+            </div>
+            <!-- Right: Logout Button -->
+            <div class="flex items-center">
+                <button
+                        id="logoutBtn"
+                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-md">
+                    Logout
+                </button>
+            </div>
+            <!-- Mobile Menu Button -->
+            <div class="flex items-center md:hidden">
+                <button id="mobileMenuBtn" class="focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Mobile Menu Items -->
+    <div id="mobileMenu" class="hidden md:hidden px-4 pb-4 space-y-2">
+        <a href="/dashboard-landlord" class="block hover:text-indigo-400">Dashboard</a>
+        <button
+                id="logoutBtnMobile"
+                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-md w-full">
+            Logout
+        </button>
+    </div>
+</nav>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
+        const logoutButtons = [document.getElementById("logoutBtn"), document.getElementById("logoutBtnMobile")];
+        // Toggle mobile menu
+        mobileMenuBtn.addEventListener("click", () => {
+            mobileMenu.classList.toggle("hidden");
+        });
+        // Logout logic
+        logoutButtons.forEach(btn => {
+            if (btn) {
+                btn.addEventListener("click", async () => {
+                    try {
+                        const res = await fetch("/logout-landlord", { method: "POST" });
+                        if (res.ok) {
+                            window.location.href = "/login-landlord";
+                        } else {
+                            alert("Logout failed.");
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
+                });
+            }
+        });
+    });
+</script>
+<div class="flex">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed md:relative z-40 inset-y-0 left-0 w-64 bg-gray-900 text-white transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
+        <div class="h-16 flex items-center justify-center bg-gray-800">
+            <h1 class="text-xl font-bold">Property Panel</h1>
+        </div>
+        <nav class="mt-6 flex flex-col space-y-2 px-4">
+            <a href="/property/add" class="px-4 py-2 rounded-lg hover:bg-gray-700">Add Property</a>
+            <a href="/property/view" class="px-4 py-2 rounded-lg hover:bg-gray-700">View All Properties</a>
+            <a href="/booking/view" class="px-4 py-2 rounded-lg hover:bg-gray-700">View All Bookings</a>
+            <a href="/booking/search/email" class="px-4 py-2 rounded-lg hover:bg-gray-700">View Booking By Email</a>
+            <a href="/property/update-payment" class="px-4 py-2 rounded-lg hover:bg-gray-700">Update Payment</a>
+            <a href="/property/search/email" class="px-4 py-2 rounded-lg hover:bg-gray-700">Search by Email</a>
+            <a href="/property/search/booking" class="px-4 py-2 rounded-lg hover:bg-gray-700">Search by Booking ID</a>
+        </nav>
+    </aside>
+    <!-- Main Content -->
+    <div class="flex-1 ml-0 md:ml-64 bg-gray-100 min-h-screen">
+        <!-- Top Bar -->
+        <header class="h-16 flex items-center bg-white shadow-md px-4">
+            <button id="sidebarToggle" class="md:hidden mr-4 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <h2 class="text-lg font-semibold">Dashboard</h2>
+        </header>
+
+        <!-- Page Content goes here -->
+        <main class="p-6">
+
+        </main>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const sidebar = document.getElementById("sidebar");
+        const toggleBtn = document.getElementById("sidebarToggle");
+
+        toggleBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("-translate-x-full");
+        });
+    });
+</script>
+<div class="max-w-6xl mx-auto mt-10">
+    <h1 class="text-2xl font-bold mb-6 text-center">Property Listings</h1>
+
+    <!-- Table -->
+    <div class="overflow-x-auto bg-white rounded-lg shadow">
+        <table class="min-w-full">
+            <thead>
+            <tr class="bg-gray-800 text-white">
+                <th class="py-3 px-4 text-left">ID</th>
+                <th class="py-3 px-4 text-left">Owner Name</th>
+                <th class="py-3 px-4 text-left">Owner Email</th>
+                <th class="py-3 px-4 text-left">Owner Mobile</th>
+                <th class="py-3 px-4 text-left">Property Name</th>
+                <th class="py-3 px-4 text-left">Property Address</th>
+                <th class="py-3 px-4 text-left">View</th>
+                <th class="py-3 px-4 text-left">Edit</th>
+                <th class="py-3 px-4 text-left">Delete</th>
+            </tr>
+            </thead>
+            <tbody id="tableBody" class="divide-y divide-gray-200">
+            <!-- Rows will be injected here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="flex justify-center mt-6 space-x-2">
+        <button id="prevBtn" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg disabled:opacity-50">Prev</button>
+        <span id="pageInfo" class="px-4 py-2"></span>
+        <button id="nextBtn" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg disabled:opacity-50">Next</button>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const tableBody = document.getElementById("tableBody");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const pageInfo = document.getElementById("pageInfo");
+
+        let currentPage = 1;
+        const limit = 5;
+
+        async function fetchData(page) {
+            try {
+                const res = await fetch(
+                    `http://localhost:8080/api/v1/propertyhost/listAll/page?page=${page}&limit=${limit}&sortField=ownerName&sortDir=asc`
+                );
+                const result = await res.json();
+
+                renderTable(result.data);
+                updatePagination(result.currentPage, result.totalPages);
+            } catch (err) {
+                console.error("Error fetching data", err);
+            }
+        }
+
+        function renderTable(data) {
+            tableBody.innerHTML = "";
+            if (!data || data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4">No properties found.</td></tr>`;
+                return;
+            }
+            data.forEach(property => {
+                tableBody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td class="py-2 px-4">${property.id}</td>
+                        <td class="py-2 px-4">${property.ownerName}</td>
+                        <td class="py-2 px-4">${property.ownerEmail}</td>
+                        <td class="py-2 px-4">${property.ownerMobile}</td>
+                        <td class="py-2 px-4">${property.propertyName}</td>
+                        <td class="py-2 px-4">${property.propertyAddress}</td>
+                        <td class="py-2 px-4"><button class="text-blue-500">View</button></td>
+                        <td class="py-2 px-4"><button class="text-green-500">Edit</button></td>
+                        <td class="py-2 px-4"><button class="text-red-500">Delete</button></td>
+                    </tr>
+                `);
+            });
+        }
+
+        function updatePagination(page, totalPages) {
+            currentPage = page;
+            pageInfo.textContent = `Page ${page} of ${totalPages}`;
+            prevBtn.disabled = (page === 1);
+            nextBtn.disabled = (page === totalPages);
+        }
+
+        prevBtn.addEventListener("click", () => {
+            if (currentPage > 1) fetchData(currentPage - 1);
+        });
+
+        nextBtn.addEventListener("click", () => {
+            fetchData(currentPage + 1);
+        });
+
+        fetchData(currentPage);
+    });
+</script>
+
+<footer class="bg-gray-900 text-white py-10">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Column 1: Logo + Description -->
+        <div>
+            <h2 class="text-2xl font-bold mb-3">Rental Booking</h2>
+            <p class="text-gray-400 text-sm">Your trusted partner for quick and safe rental bookings around the city.</p>
+        </div>
+
+        <!-- Column 3: Contact Info -->
+        <div>
+            <h3 class="text-xl font-semibold mb-3">Contact Us</h3>
+            <p class="text-gray-300 text-sm"> Barrackpore, Kolkata</p>
+            <p class="text-gray-300 text-sm">+91 9875441655</p>
+            <p class="text-gray-300 text-sm"> support@ridenow.com</p>
+        </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="mt-10 border-t border-gray-700 pt-4 text-center text-sm text-gray-400">
+        &copy; <span id="year">© Suman Talukdar</span> E-Rentals. All rights reserved.
+    </div>
+</footer>
+</body>
+</html>

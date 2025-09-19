@@ -87,38 +87,39 @@ public class PostPropertyController {
 			)
 	
 	@GetMapping("listAll")
-	public ResponseEntity<Map<String, Object>> getAllPostDetails(){
-		return findPaginatedAllDetails(1,"ownerName","asc");
+	public ResponseEntity<Map<String, Object>> getAllPostDetails() {
+	    return findPaginatedAllDetails(1, 10, "ownerName", "asc");
 	}
-	@GetMapping("listAll/page/{pageNo}")
-	// Get all post details
-		// http://localhost:8080/api/v1/propertyhost/listAll
-		@Operation(
-				summary ="Get Property REST API paginated data",
-				description="GET all the property details paginated data"
-				)
-		@ApiResponse(
-				responseCode = "201",
-				description = "HTTP STATUS 201 created"
-				)
+
+	@GetMapping("listAll/page")
+	@Operation(
+	        summary = "Get Property REST API paginated data",
+	        description = "GET all the property details paginated data"
+	)
+	@ApiResponse(
+	        responseCode = "200",
+	        description = "HTTP STATUS 200 OK"
+	)
 	public ResponseEntity<Map<String, Object>> findPaginatedAllDetails(
-			@PathVariable("pageNo") int pageNo,
-			@RequestParam("sortField") String sortField,
-			@RequestParam("sortDir") String sortDir
-			){
-		int pageSize = 10;
-		Page<PropertyPosting> page = propertyPostServices.findPaginatedAllDetails(pageNo, pageSize, sortField, sortDir);
-		List<PropertyPosting> listPropertiesAll = page.getContent();
-		Map<String,Object> response = new HashMap<>();
-		response.put("currentPage",pageNo);
-		response.put("totalElements", page.getTotalElements());
-		response.put("totalPages",page.getTotalPages());
-		response.put("sortField", sortField);
-		response.put("sortDir", sortDir);
-		response.put("reverseSortDir", sortDir.equals("asc")?"desc":"asc");
-		response.put("listPropertiesAll", listPropertiesAll);
-		LOGGER.info("Property Details pagination executed successfully");
-		return ResponseEntity.ok(response);
+	        @RequestParam(defaultValue = "1") int page,
+	        @RequestParam(defaultValue = "10") int limit,
+	        @RequestParam(defaultValue = "ownerName") String sortField,
+	        @RequestParam(defaultValue = "asc") String sortDir
+	) {
+	    Page<PropertyPosting> propertyPage =
+	            propertyPostServices.findPaginatedAllDetails(page, limit, sortField, sortDir);
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("currentPage", page);
+	    response.put("totalElements", propertyPage.getTotalElements());
+	    response.put("totalPages", propertyPage.getTotalPages());
+	    response.put("sortField", sortField);
+	    response.put("sortDir", sortDir);
+	    response.put("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+	    response.put("data", propertyPage.getContent());
+
+	    LOGGER.info("Property Details pagination executed successfully");
+	    return ResponseEntity.ok(response);
 	}
 	// fetch the property details with respect to email
 	//http://localhost:8080/propertyhost/listSearchByEmail
@@ -213,9 +214,9 @@ public class PostPropertyController {
 						responseCode = "201",
 						description = "HTTP STATUS 201 CREATED"
 						)
-	@PutMapping("updatePayment/{postId}")
-	public ResponseEntity<PropertyPostDto> updatePropertyPayment(@PathVariable("postId") String postId, PaymentDto paymentDto){
-		PropertyPosting updatedPropertyPosting = propertyPostServices.updatePaymentStatusProperties(postId, paymentDto.isPayment());
+	@PutMapping("updatePayment")
+	public ResponseEntity<PropertyPostDto> updatePropertyPayment(PaymentDto paymentDto){
+		PropertyPosting updatedPropertyPosting = propertyPostServices.updatePaymentStatusProperties(paymentDto.getPostId(), paymentDto.isPayment());
 		LOGGER.info("Updation of payment us executed successfully");
 		PropertyPostDto updatedPropertyPostDto = postMapper.mapToPropertyPostDto(updatedPropertyPosting);
 		return ResponseEntity.ok(updatedPropertyPostDto);
